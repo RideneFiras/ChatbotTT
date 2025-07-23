@@ -1,0 +1,423 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a smart preprocessing assistant for a Tunisian Telecom customer service system.\n\nYou will receive noisy, raw customer inputs — possibly containing:\n\nTypos\n\nTranscription errors (from speech-to-text)\n\nMixed languages (French, Arabic, Tunisian dialect, sometimes Latin letters)\n\nYour job is to:\n\nUnderstand the intended meaning (even if the wording is imperfect).\n\nRewrite it as a clear, formal question that the customer service system can handle.\n\nDetect and specify the dominant language or dialect (choose: French, English, Arabic, Tunisian dialect).\n\n⚠ Important:\n\nDo not answer the question.\n\nOnly clean and clarify the input + detect language.\n\nOutput format:\n{\n  \"cleaned_question\": \"...\",\n  \"detected_language\": \"...\"\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        1100,
+        -120
+      ],
+      "id": "ea123b60-7c6b-40f3-8e12-960c175e4bc7",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1080,
+        140
+      ],
+      "id": "564c1671-fbae-4248-a4a3-f4f37aa8590c",
+      "name": "OpenAI Chat Model1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional customer support assistant for Tunisian Telecom.\n\nYou will receive:\n- A cleaned and clear customer question → {{ $json.output.cleaned_question }}\n- The detected customer language → {{ $json.output.detected_language }}\n- Access to a reference Q&A database (provided separately).\n\nYour tasks:\n1️⃣ Identify the most relevant answer from the reference Q&A data.\n2️⃣ Provide a clear, polite, and complete reply in the same language as the customer.\n3️⃣ If no matching answer is found, kindly inform the customer and suggest they contact human support.\n\nImportant rules:\n- Only respond using the provided Q&A reference. Do NOT create or assume answers.\n- Keep your language simple, friendly, and professional.\n- Always respect the customer’s detected language and cultural tone.\n",
+        "options": {
+          "systemMessage": "="
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        1480,
+        -120
+      ],
+      "id": "6b2917fe-160c-483b-a134-c588b415d904",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1500,
+        60
+      ],
+      "id": "ab3354e7-1106-4468-802c-d9b7cb1a24a3",
+      "name": "OpenAI Chat Model2"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"cleaned_question\": {\n      \"type\": \"string\"\n    },\n    \"detected_language\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\"cleaned_question\", \"detected_language\"]\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1320,
+        120
+      ],
+      "id": "4c544a0e-fe2a-412d-ac03-d245bd41e31e",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1CYnQu4ZHmeurehy0tpQ-otsPIDXEkilOkRLFVQ7XviE",
+          "mode": "list",
+          "cachedResultName": "QA_Tunisie_Telecom_Complet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CYnQu4ZHmeurehy0tpQ-otsPIDXEkilOkRLFVQ7XviE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 355261121,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CYnQu4ZHmeurehy0tpQ-otsPIDXEkilOkRLFVQ7XviE/edit#gid=355261121"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        1700,
+        80
+      ],
+      "id": "f7a568f4-0452-4e3a-b82c-6dcc4eff7694",
+      "name": "Google Sheets"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "*"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        340,
+        160
+      ],
+      "id": "0f29893f-9ce1-491f-a105-290d03de009b",
+      "name": "Telegram Trigger",
+      "webhookId": "ebf4d473-912b-49ef-acd7-45094a542b69"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bb7909ce-4ae6-4349-9ec6-eb5601c8e5a2",
+              "name": "sessionId",
+              "value": "={{ $json.message.message_id }}",
+              "type": "string"
+            },
+            {
+              "id": "63da466c-6b40-4e30-baee-7b2f4479cef4",
+              "name": "chatInput",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "a718fbc7-b4f2-4f66-8051-f31e594b93f5",
+              "name": "action",
+              "value": "sendMessage",
+              "type": "string"
+            },
+            {
+              "id": "0e0d64bb-724f-4476-b02c-9a2dd58b19bc",
+              "name": "source",
+              "value": "telegram",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        700,
+        160
+      ],
+      "id": "7d203697-5a64-460f-adff-fadc74181ef2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "850cd230-d0cb-45a5-a189-23f10de3d5a4",
+              "name": "sessionId",
+              "value": "={{ $json.sessionId }}",
+              "type": "string"
+            },
+            {
+              "id": "2829a76f-5cda-4cf0-95a1-bf1d0381d128",
+              "name": "action",
+              "value": "=sendMessage",
+              "type": "string"
+            },
+            {
+              "id": "94ac1bfa-63c5-459b-aa9f-7704039d6c21",
+              "name": "chatInput",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "02b00055-6352-44bc-9d31-4a67bc7fc205",
+              "name": "source",
+              "value": "chat",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        600,
+        -200
+      ],
+      "id": "4caa6515-0137-4ea0-96b0-38fdc11dff39",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2240,
+        0
+      ],
+      "id": "9cc1d901-5bd1-48e7-8187-30823ce07f53",
+      "name": "Telegram",
+      "webhookId": "27b496c4-5c0b-4599-bc47-cab4f9aad225"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "n8n-chatbot",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        320,
+        -160
+      ],
+      "id": "72054d53-51c0-47f5-b8df-5577282d68c0",
+      "name": "Webhook",
+      "webhookId": "5d9f91fa-9287-40f1-966d-62c1a015382e"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={\n  \"response\": {{$items[0].json.output}}\n}\n",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        1900,
+        -40
+      ],
+      "id": "988e0ce0-f0f2-4192-819f-70cd3e7c3b80",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2080,
+        -220
+      ],
+      "id": "1723e843-b7c9-47a0-86b8-13ea2325e692",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7b68fbcc-f87a-4ecc-8187-d83870c4d639",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "62cbf52a3f342dc464dcbcbfc70d8b5911ed062b63bd9319e864cf8985459313"
+  },
+  "id": "NtVBJyiYeYUzRed4",
+  "tags": []
+}

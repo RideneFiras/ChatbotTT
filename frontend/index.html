@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot Tunisie Télécom</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="main-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <img src="/static/image/TTlogo.png" alt="Tunisie Telecom Logo" class="tt-logo">
+      </div>
+      <div class="sidebar-history">
+        <h3>Historique</h3>
+        <ul id="chat-history"></ul>
+      </div>
+    </aside>
+    <button id="sidebar-toggle" class="sidebar-toggle" title="Afficher/masquer le menu">
+      <svg id="sidebar-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C4DFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+    </button>
+    <div class="chat-container">
+      <div class="chat-messages" id="chat-messages">
+        <div class="welcome-block" id="welcome-block">
+          <img src="/static/image/TTlogo.png" alt="Tunisie Telecom Logo" class="welcome-logo">
+          <div class="welcome-title">Bienvenue chez Tunisie Telecom</div>
+          <div class="welcome-desc">Comment puis-je vous aider aujourd'hui&nbsp;?</div>
+        </div>
+      </div>
+      <form id="chat-form" autocomplete="off">
+        <div class="input-bar">
+          <button type="button" id="add-btn" title="Ajouter">+</button>
+          <input type="file" id="file-input" accept="image/*,.pdf" style="display:none;" />
+          <button type="button" id="voice-btn" title="Message vocal" class="voice-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="2" width="6" height="12" rx="3"/>
+              <path d="M5 10v2a7 7 0 0 0 14 0v-2"/>
+              <line x1="12" y1="22" x2="12" y2="18"/>
+              <line x1="8" y1="22" x2="16" y2="22"/>
+            </svg>
+          </button>
+          <input type="text" id="user-input" placeholder="Poser une question" autocomplete="off" />
+          <button type="submit" id="send-btn" title="Envoyer" class="send-btn">→</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
