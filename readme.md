@@ -48,10 +48,6 @@ The system consists of:
 ![Telegram Bot 1](assets/telegram1.jpg)
 ![Telegram Bot 2](assets/telegram2.jpg)
 
-### Video Demos
-- [Text Demo](Video_demos/text.mp4)
-- [Voice Demo](Video_demos/voice.mp4)
-
 ## Knowledge Base
 
 Our FAQ database is available in this [Google Sheet](https://docs.google.com/spreadsheets/d/1CYnQu4ZHmeurehy0tpQ-otsPIDXEkilOkRLFVQ7XviE/edit?gid=355261121#gid=355261121)
