@@ -7,6 +7,11 @@ import json
 import whisper
 import torch
 
+# Load N8N_URL from environment variable
+N8N_URL = os.getenv("N8N_URL")
+if not N8N_URL:
+    raise RuntimeError("N8N_URL environment variable is not set. Please set it in your .env file.")
+
 app = FastAPI()
 
 # Autoriser le CORS pour le frontend local
@@ -93,8 +98,6 @@ import os
 import whisper
 import httpx
 from gtts import gTTS
-
-N8N_URL = "http://localhost:5678/webhook/n8n-chatbot"
 
 @app.post("/voice-chat")
 async def voice_chat(file: UploadFile = File(...)):
