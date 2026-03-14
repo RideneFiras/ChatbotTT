@@ -6,6 +6,10 @@ import os
 import json
 import whisper
 import torch
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = FastAPI()
 
@@ -27,6 +31,9 @@ app.mount("/staticf", StaticFiles(directory="./staticf", html=True), name="stati
 
 audio_output_path = os.path.join("staticf", "generated_audio.mp3")
 
+# Load n8n URL from environment variable
+N8N_URL = os.getenv("N8N_URL", "http://localhost:5678/webhook/n8n-chatbot")
+
 # Load Whisper model at startup (you can adjust the size: tiny, base, small, medium, large)
 print(" Loading Whisper model...")
 whisper_model = whisper.load_model("base", device="cpu")
@@ -37,8 +44,6 @@ async def upload_file(file: UploadFile = File(...)):
     return JSONResponse(content={"filename": file.filename, "status": "success"})
 
 import httpx
-
-#N8N_URL = "http://localhost:5678/webhook-test/n8n-chatbot"
 
 @app.post("/chat")
 async def chat_endpoint(payload: dict):
@@ -93,8 +98,6 @@ import os
 import whisper
 import httpx
 from gtts import gTTS
-
-N8N_URL = "http://localhost:5678/webhook/n8n-chatbot"
 
 @app.post("/voice-chat")
 async def voice_chat(file: UploadFile = File(...)):
