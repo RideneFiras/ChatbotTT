@@ -79,7 +79,7 @@ Our FAQ database is available in this [Google Sheet](https://docs.google.com/spr
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/chatbot-tt.git
+git clone https://github.com/RideneFiras/chatbot-tt.git
 cd chatbot-tt/backend
 ```
 
